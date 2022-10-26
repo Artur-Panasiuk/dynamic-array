@@ -1,88 +1,111 @@
 #include <iostream>
 #include <time.h>
+#include <string>
 
 using namespace std;
 
 template <typename T>
-class dynArr{
-    double arrayMultip {2};
-    int currSize {0};
-    int maxSize {1};
+class dynArr {
+    int arrayMultip{ 2 };
+    int currSize{ 0 };
+    int maxSize{ 1 };
     T* arr;
     T* tempArr;
+
+    union iterable{
+        int i;
+        float f;
+        double d;
+    };
 public:
-    dynArr(){
+    dynArr() {
         arr = new T[maxSize];
     }
-    ~dynArr(){
-        //clean(false);
+    ~dynArr() {
         delete arr;
     }
-    void add(T data){
-        if(currSize == maxSize){
+    void add(T data) {
+        if (currSize == maxSize) {
             tempArr = new T[currSize];
-            for(int i = 0; i < currSize; i++){
+            for (int i = 0; i < currSize; i++) {
                 tempArr[i] = arr[i];
             }
             delete arr;
-            maxSize  *= arrayMultip;
+            maxSize *= arrayMultip;
             arr = new T[maxSize];
-            for(int j = 0; j < currSize; j++){
+            for (int j = 0; j < currSize; j++) {
                 arr[j] = tempArr[j];
             }
             delete tempArr;
         }
-            arr[currSize] = data;
-            currSize++;
+        arr[currSize] = data;
+        currSize++;
     }
-    void get(int index = 0){
-        if(index < 0 || index > maxSize) return;
+    void get(int index = 0) {
+        if (index < 0 || index > maxSize) throw std::out_of_range("array index out of range");
 
         return arr[index];
     }
-    void swapData(int index, T data){
-        if(index < 0 || index > maxSize) return;
+    void swapData(int index, T data) {
+        if (index < 0 || index > maxSize) throw std::out_of_range("array index out of range");
+
+        arr[index] = data;
     }
-    void clean(bool isPOD = false){
-        if(isPOD){
-            for(int j = 0; j < currSize; j++){
+    void clean(bool isPOD = false) {
+        if (isPOD) {
+            for (int j = 0; j < currSize; j++) {
                 arr[j] = NULL;
             }
-        }else{
+        }
+        else {
             return;
         }
     }
-    void toString(){
-        for(int i = 0; i < currSize; i++){
-            cout<< i << "-" << arr[i]<<endl;
-        }
-        cout<<"Max size: "<<maxSize<<endl;
-    }
-    void bubbleSort(bool isPOD = false){
-        if(isPOD){
+    string toString(bool isPOD = false) {
+        string info = arrInfo();
 
-        }else{
+        //if(isPOD) info + content()
+
+        return info;
+    }
+
+    string arrInfo() {
+        string info = "Mnoznik tabeli: " + to_string(arrayMultip) + "\n" + "Aktualny rozmiar tabeli: " + to_string(currSize) + "\n" + "Maksymalny rozmiar tabeli: " + to_string(maxSize) + "\n";
+
+        return info;
+    }
+
+    /*
+    string content() {
+        for (int i = 0; i < currSize; i++) {
+            stringstream ss(arr[i]);
+        }
+        return ss;
+    }
+    */
+
+
+    void bubbleSort(bool isPOD = false) {
+        if (isPOD) {
+
+        }
+        else {
             return;
         }
     }
 };
 
-void printString(string text){
+void timeTest() {
 
 }
 
-void timeTest(){
-
-}
-
-int main()
-{
+int main() {
     dynArr<int>* a = new dynArr<int>;
 
-    for(int i = 0; i < 100; i++){
-        a->add(i);
+    for (int i = 0; i < 100; i++) {
+        a->add(i*2);
     }
-    a->toString();
+    cout << a->toString();
 
     delete a;
 
