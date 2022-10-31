@@ -1,6 +1,7 @@
 #include <iostream>
 #include <time.h>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -64,7 +65,7 @@ public:
     string toString(bool isPOD = false) {
         string info = arrInfo();
 
-        //if(isPOD) info + content()
+        if(isPOD) info += content();
 
         return info;
     }
@@ -75,18 +76,23 @@ public:
         return info;
     }
 
-    /*
+
     string content() {
-        for (int i = 0; i < currSize; i++) {
-            stringstream ss(arr[i]);
+        string temp;
+
+        int customSize = (currSize < 100) ? currSize : 100;
+
+        for (int i = 0; i < customSize; i++) {
+            temp += to_string(arr[i]);
+            temp += "\n";
         }
-        return ss;
+        return temp;
     }
-    */
 
 
-    void bubbleSort(bool isPOD = false) {
-        if (isPOD) {
+    void bubbleSort(bool isNum = false) {
+        if (isNum) {
+                int n = arr.lenght;
             for (int i = 0; i < n - 1; i++){
                 for (int j = 0; j < n - i - 1; j++){
                     if (arr[j] > arr[j + 1]){
@@ -100,19 +106,30 @@ public:
     }
 };
 
-void timeTest() {
+void dynArrTimeTest(int loopSize) {
+    clock_t t1, t2, t3;
+    dynArr<int>* a = new dynArr<int>;
 
+    t1 = clock();
+    for(int i = 0; i < loopSize; i++){
+        a->add(i);
+    }
+    t2 = clock();
+
+    cout << a->toString(true);
+
+    t3 = clock();
+
+    cout << "TIME TABLE IN MILISECONDS" << endl;
+    cout << endl << (double)(t2 - t1)  / CLK_TCK << " :To create loopSize dynamic array" << endl;
+    cout << endl << (double)(t3 - t2)  / CLK_TCK << " :To write information on screen" << endl;
+    cout << endl << (double)(t3 - t1)  / CLK_TCK << " :From Start to Finish." << endl;
+
+    delete a;
 }
 
 int main() {
-    dynArr<int>* a = new dynArr<int>;
-
-    for (int i = 0; i < 100; i++) {
-        a->add(i*2);
-    }
-    cout << a->toString();
-
-    delete a;
+    dynArrTimeTest(100000);
 
     return 0;
 }
