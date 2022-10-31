@@ -5,9 +5,14 @@ Implemented as class named dynArr.
 ## Member functions
 - *(constructor)*
 - *(destructor)*
-- add
-- get
-- swapData
-- clean
-- toString
-- bubbleSort
+- add(data)
+- get(index)
+- swapData(index, data)
+- clean(isPOD)
+- toString(isPOD)
+- arrInfo
+- content
+- bubbleSort(isNum)
+
+## Test function
+- dynArrTimeTest(loopSize)
