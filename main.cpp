@@ -13,31 +13,22 @@ class dynArr {
     T* arr;
     T* tempArr;
 
-    union iterable{
-        int i;
-        float f;
-        double d;
-    };
 public:
     dynArr() {
         arr = new T[maxSize];
     }
     ~dynArr() {
-        delete arr;
+        delete[] arr;
     }
     void add(T data) {
         if (currSize == maxSize) {
-            tempArr = new T[currSize];
-            for (int i = 0; i < currSize; i++) {
-                tempArr[i] = arr[i];
-            }
-            delete arr;
             maxSize *= arrayMultip;
-            arr = new T[maxSize];
+            T* temp = new T[maxSize];
             for (int j = 0; j < currSize; j++) {
-                arr[j] = tempArr[j];
+                temp[j] = arr[j];
             }
-            delete tempArr;
+            delete[] arr;
+            arr = temp;
         }
         arr[currSize] = data;
         currSize++;
@@ -65,7 +56,7 @@ public:
     string toString(bool isPOD = false) {
         string info = arrInfo();
 
-        if(isPOD) info += content();
+        if (isPOD) info += content();
 
         return info;
     }
@@ -92,27 +83,37 @@ public:
 
     void bubbleSort(bool isNum = false) {
         if (isNum) {
-                int n = arr.lenght;
-            for (int i = 0; i < n - 1; i++){
-                for (int j = 0; j < n - i - 1; j++){
-                    if (arr[j] > arr[j + 1]){
-                       swap(arr[j], arr[j + 1]);
+            int n = arr.lenght;
+            for (int i = 0; i < n - 1; i++) {
+                for (int j = 0; j < n - i - 1; j++) {
+                    if (arr[j] > arr[j + 1]) {
+                        swap(arr[j], arr[j + 1]);
                     }
                 }
             }
-        } else {
+        }
+        else {
             return;
         }
     }
 };
 
 void dynArrTimeTest(int loopSize) {
-    clock_t t1, t2, t3;
+    clock_t t1, t2, t3, t4, t5;
     dynArr<int>* a = new dynArr<int>;
+    srand(time(NULL));
 
+    double worst = 0, now = 0;
     t1 = clock();
-    for(int i = 0; i < loopSize; i++){
-        a->add(i);
+    for (int i = 0; i < loopSize; i++) {
+        t4 = clock();
+        a->add(i*(rand() % 100));
+        t5 = clock();
+        now = (t5 - t4) / (double) CLOCKS_PER_SEC;
+        if (now > worst) {
+            cout << "iteracja nr.: " << i << " jest aktualnie najwolniejsza (czas w sekundach): " << now << endl;
+            worst = now;
+        }
     }
     t2 = clock();
 
@@ -120,16 +121,16 @@ void dynArrTimeTest(int loopSize) {
 
     t3 = clock();
 
-    cout << "TIME TABLE IN MILISECONDS" << endl;
-    cout << endl << (double)(t2 - t1)  / CLK_TCK << " :To create loopSize dynamic array" << endl;
-    cout << endl << (double)(t3 - t2)  / CLK_TCK << " :To write information on screen" << endl;
-    cout << endl << (double)(t3 - t1)  / CLK_TCK << " :From Start to Finish." << endl;
+    cout << "TIME TABLE IN SECONDS" << endl;
+    cout << endl << (double)(t2 - t1) / CLOCKS_PER_SEC << " :To create loopSize dynamic array" << endl;
+    cout << endl << (double)(t3 - t2) / CLOCKS_PER_SEC << " :To write information on screen" << endl;
+    cout << endl << (double)(t3 - t1) / CLOCKS_PER_SEC << " :From Start to Finish." << endl;
 
     delete a;
 }
 
 int main() {
-    dynArrTimeTest(100000);
+    dynArrTimeTest(1000000);
 
     return 0;
 }
